@@ -42,3 +42,11 @@ def sample_xlsx(n_per_session: int = 90) -> bytes:
     buf = BytesIO()
     generate({"Pagi": n_per_session, "Siang": n_per_session, "Sore": n_per_session}).to_excel(buf, index=False)
     return buf.getvalue()
+
+
+def sample_arrivals_xlsx() -> bytes:
+    """Contoh catatan jam kedatangan donor (Excel, kolom 'timestamp') untuk diunduh dan dicoba."""
+    from io import BytesIO
+    buf = BytesIO()
+    pd.DataFrame({"timestamp": generate_arrivals()}).to_excel(buf, index=False)
+    return buf.getvalue()

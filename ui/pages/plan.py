@@ -16,9 +16,17 @@ def render():
             st.caption("Perkiraan jumlah donor selama seluruh survei, misalnya 2 minggu.")
         else:
             up = st.file_uploader("File Excel atau CSV dengan kolom 'timestamp'", type=["xlsx", "xls", "csv"])
+            st.download_button("Unduh contoh catatan kedatangan (Excel)", synthetic.sample_arrivals_xlsx(),
+                               "contoh_jam_kedatangan_donor.xlsx",
+                               mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                               help="Data buatan untuk mencoba. Ganti isinya dengan catatan Anda, kolom 'timestamp' berisi tanggal dan jam datang.")
             if up:
                 with st.spinner("Membaca file..."):
-                    times = data_io.read_table(up)["timestamp"]
+                    table = data_io.read_table(up)
+                if "timestamp" not in table.columns:
+                    st.error("Kolom 'timestamp' tidak ditemukan di file.")
+                    return
+                times = table["timestamp"]
             elif st.toggle("Pakai contoh catatan (demo)"):
                 times = synthetic.generate_arrivals()
             else:
