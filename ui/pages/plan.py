@@ -49,4 +49,3 @@ def render():
         c.info("Kenapa tidak semua donor?", "Cukup sebagian donor yang dipilih secara bergiliran. Hasilnya tetap bisa mewakili semua donor, dan petugas tidak kewalahan.")
     for w in plan.warnings(rows):
         st.warning(w)
-    st.info("Bagikan form sesudah donor selesai, dan beri ke donor sesuai giliran. Jangan memilih orang yang tampak ramah saja.")
