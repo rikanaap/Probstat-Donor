@@ -13,7 +13,7 @@ def render():
         if mode.startswith("Hanya"):
             cols = st.columns(len(config.DEFAULT_SESSIONS))
             counts = {s: col.number_input(f"Donor sesi {s}", 0, 100000, 300) for s, col in zip(config.DEFAULT_SESSIONS, cols)}
-            st.caption("Perkiraan jumlah donor selama seluruh survei, misalnya 2 minggu.")
+            st.caption("Perkiraan jumlah donor selama seluruh survei")
         else:
             up = st.file_uploader("File Excel atau CSV dengan kolom 'timestamp'", type=["xlsx", "xls", "csv"])
             st.download_button("Unduh contoh catatan kedatangan (Excel)", synthetic.sample_arrivals_xlsx(),
