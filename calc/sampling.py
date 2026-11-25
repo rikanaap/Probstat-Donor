@@ -13,17 +13,20 @@ def cochran(N: int, e: float = 0.10, conf: float = 0.95, p: float = 0.5) -> int:
     return min(N, ceil(n0 / (1 + (n0 - 1) / N)))
 
 
-def slovin(N: int, e: float = 0.10) -> int:
-    return 0 if N <= 0 else min(N, ceil(N / (1 + N * e**2)))
-
-
 def sampling_interval(N: int, n: int) -> int:
     """Setiap donor ke-k diberi form (sampel sistematis)."""
     return max(1, N // n) if n > 0 else 0
 
 
-def min_for_regression(k_items: int, per_item: int = 10) -> int:
-    return k_items * per_item
+def min_for_regression(k_items: int, rule: str = "green") -> int:
+    """Minimum sampel untuk regresi linear dengan k prediktor.
+
+    green  : max(50 + 8k, 104 + k)  (Green, 1991)
+    ten_x  : 10 * k                 (rule of thumb, batas bawah)
+    """
+    if rule == "ten_x":
+        return 10 * k_items
+    return max(50 + 8 * k_items, 104 + k_items)
 
 
 def assign_session(hour: int, sessions: dict) -> str:
@@ -38,12 +41,3 @@ def count_by_session(timestamps: pd.Series, sessions: dict) -> dict:
     labels = hours.map(lambda h: assign_session(h, sessions))
     return labels.value_counts().to_dict()
 
-
-def sample_table(counts: dict, e: float, conf: float, k_items: int) -> pd.DataFrame:
-    rows = []
-    for name, N in counts.items():
-        n = cochran(N, e, conf)
-        rows.append({"Sesi": name, "Populasi (N)": N, "Cochran": n,
-                     "Slovin": slovin(N, e), "Interval (tiap ke-k)": sampling_interval(N, n),
-                     "Cukup untuk regresi?": n >= min_for_regression(k_items)})
-    return pd.DataFrame(rows)

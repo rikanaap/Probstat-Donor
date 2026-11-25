@@ -52,16 +52,13 @@ def _simulation(df, top):
             a, b = st.columns(2)
             step = a.slider("Naik berapa nilai?", 0.5, 2.0, 1.0, 0.5)
             total = b.number_input("Jumlah donor per periode", 1, 100000, 300)
-            with st.expander("Pengaturan lanjutan"):
-                come = st.slider("Dari yang ingin kembali, berapa persen benar-benar datang?", 10, 100, 50) / 100
-                out = st.slider("Berapa persen donor tidak lolos pemeriksaan?", 0, 50, 10) / 100
             go = st.form_submit_button("Hitung perkiraan", type="primary")
         if go:
             if not choice:
                 st.warning("Pilih minimal satu layanan.")
             else:
                 with st.spinner("Menghitung perkiraan..."):
-                    st.session_state["sim"] = scenario.what_if(df, choice, step, int(total), come, out)
+                    st.session_state["sim"] = scenario.what_if(df, choice, step, int(total))
         r = st.session_state.get("sim")
         if r is None:
             st.info("Atur pilihan di atas, lalu tekan **Hitung perkiraan**.")
