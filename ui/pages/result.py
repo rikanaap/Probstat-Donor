@@ -51,7 +51,7 @@ def _simulation(df, top):
                                     default=[p["key"] for p in top])
             a, b = st.columns(2)
             step = a.slider("Naik berapa nilai?", 0.5, 2.0, 1.0, 0.5)
-            total = b.number_input("Jumlah donor per periode", 1, 100000, 300)
+            total = b.number_input("Jumlah donor per periode (N)", 1, 100000, 300)
             go = st.form_submit_button("Hitung perkiraan", type="primary")
         if go:
             if not choice:
@@ -63,11 +63,18 @@ def _simulation(df, top):
         if r is None:
             st.info("Atur pilihan di atas, lalu tekan **Hitung perkiraan**.")
             return
-        st.success(f"Perkiraan: sekitar **{r['donor_tambahan']:.0f} donor tambahan** dan **± {r['kantong']:.0f} kantong darah** per periode.")
+        low_diff = int(round(r["ci_diff"][0]))
+        high_diff = int(round(r["ci_diff"][1]))
+        st.success(f"Perkiraan: bertambah sekitar **+{r['donor_tambahan']:.0f} donor berniat kembali** per periode "
+                   f"(rentang keyakinan 95%: **{low_diff} – {high_diff} donor**).")
         m1, m2 = st.columns(2)
-        m1.metric("Ingin kembali sekarang", f"{r['sekarang']:.0%}")
-        m2.metric("Setelah perbaikan", f"{r['sesudah']:.0%}", f"{(r['sesudah'] - r['sekarang']) * 100:+.1f}%")
-        c.info("Seberapa pasti?", "Ini **perkiraan**, bukan jaminan. Hasil nyata bergantung pada pelaksanaan perbaikan di lapangan.")
+        m1.metric("Donor Berniat Kembali (Saat Ini)", f"{r['exp0']:.0f} orang", f"Peluang: {r['p0']:.1%}")
+        m2.metric("Setelah Perbaikan", f"{r['exp1']:.0f} orang", f"+{r['donor_tambahan']:.0f} orang ({r['p1']:.1%})")
+        c.info("Landasan Statistik",
+               "Perhitungan ini murni berbasis teori probabilitas & statistika:\n\n"
+               "- **Regresi Linear (OLS)** untuk menghitung pengaruh perbaikan layanan.\n"
+               "- **Distribusi Normal Residual** $\\mathcal{N}(0, \\sigma^2)$ untuk menghitung peluang berniat kembali ($Y \\ge 4$).\n"
+               "- **Distribusi Binomial** $\\text{Binomial}(N, p)$ untuk menghitung nilai harapan jumlah donor riil dan Interval Keyakinan 95%.")
 
 
 def render():
