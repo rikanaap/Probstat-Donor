@@ -51,7 +51,7 @@ def _simulation(df, top):
                                     default=[p["key"] for p in top])
             a, b = st.columns(2)
             step = a.slider("Naik berapa nilai?", 0.5, 2.0, 1.0, 0.5)
-            total = b.number_input("Jumlah donor per periode (N)", 1, 100000, 300)
+            total = b.number_input("Jumlah orang yang hadir", 1, 100000, 300)
             go = st.form_submit_button("Hitung perkiraan", type="primary")
         if go:
             if not choice:
